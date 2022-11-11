@@ -1,17 +1,31 @@
-import { View, Text,TextInput,StyleSheet } from 'react-native'
+import { View, Text,TextInput,StyleSheet, TextInputProps } from 'react-native'
 import React from 'react'
 import { normalize, SCREEN_WIDTH, vh,vw } from '../../Utils/dimensions';
 import { colors } from '../../Utils/colors';
 
-const FormTextInput = ({
+interface Props{
+  placholder:string,
+    onChangeText:any,
+    title:string,
+    secureText:boolean,
+}
+
+/**
+ * 
+ * @param param0 
+ * @returns 
+ */
+
+const FormTextInput = (props:Props) => {
+  const {
     placholder,
     onChangeText,
     title,
     secureText,
-}:any) => {
+}=props
   return (
     <View style={styles.viewStyle}>
-        <Text style={styles.titleStyle}>{title}</Text>
+        <Text style={styles.titleText}>{title}</Text>
       <TextInput secureTextEntry={secureText}  style={styles.textInputStyle} placeholder={placholder} onChangeText={onChangeText}/>
     </View>
   )
@@ -19,22 +33,22 @@ const FormTextInput = ({
 
 const styles = StyleSheet.create({
     viewStyle:{
-        height:vh(80),
-        width:vw(350),
-        justifyContent:'space-between',
+        height:vh(63),
+        width:vw(320),
+    marginVertical:vh(10),
     },
-    titleStyle:{
+    titleText:{
         color:'white',
-        fontSize:16,
+        fontSize:14,
+        marginBottom:vh(7),
         fontWeight:'500',
     },
     textInputStyle:{
-        height:vh(50),
         width:'100%',
-        paddingHorizontal:10,
+        padding:vh(10),
         backgroundColor:'white',
         borderRadius:normalize(5),
-        fontSize:normalize(17)
+        fontSize:normalize(16)
     }
 });
 
