@@ -42,7 +42,29 @@ const loginStyles = StyleSheet.create({
     },
     inputView:{
       marginTop: vh(20),   
-    }
+    },
+    googleBtn:{
+      height:vh(45),
+      width:vw(320),
+      borderRadius:normalize(5),
+    },
+    googleIcon:{
+      height:vh(30),
+      width:vh(30),
+      marginRight:vw(5)
+    },
+    googleText:{
+      color:'#455A64',
+      fontSize:normalize(16),
+      fontWeight:'600',
+    },
+    signBtnText:{
+      color:colors.white,
+      fontSize:normalize(16),
+      fontWeight:'600',
+    },
+    
+    
 });
 
 export default loginStyles;

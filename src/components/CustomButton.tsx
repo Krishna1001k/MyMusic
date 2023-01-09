@@ -1,21 +1,36 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Image} from 'react-native';
 import React from 'react';
 import {normalize, vh, vw} from '../Utils/dimensions';
-import {colors} from '../Utils/colors';
 import LinearGradient from 'react-native-linear-gradient';
 
 interface Props {
-    title:string,
+  title?: string;
+  colors?: any;
+  imageSource?: any;
+  imageStyle?: object;
+  buttonStyle?: object;
+  textStyle?: object;
+  onPress?: any;
 }
-const CustomButton = (props:Props) => {
-    const {title}=props
+const CustomButton = (props: Props) => {
+  const {
+    title,
+    colors,
+    buttonStyle,
+    textStyle,
+    imageSource,
+    imageStyle,
+    onPress,
+  } = props;
   return (
-    <TouchableOpacity activeOpacity={0.6}>
-      <LinearGradient style={styles.btnView} colors={colors.primaryGradient}
-      start={{x:0,y:1}}
-      end={{x:1,y:1}}
-      >
-        <Text style={styles.titleText} >{title}</Text>
+    <TouchableOpacity activeOpacity={0.6} onPress={onPress}>
+      <LinearGradient
+        style={[styles?.btnView, buttonStyle]}
+        colors={colors}
+        start={{x: 0, y: 1}}
+        end={{x: 1, y: 1}}>
+        {imageSource && <Image style={imageStyle} source={imageSource} />}
+        <Text style={[textStyle]}>{title}</Text>
       </LinearGradient>
     </TouchableOpacity>
   );
@@ -28,11 +43,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: normalize(5),
-    marginVertical:vh(20),
+    marginVertical: vh(20),
+    flexDirection: 'row',
   },
-  titleText:{
-      color:colors.white,
-      fontWeight:'600',
-  }
 });
 export default CustomButton;
