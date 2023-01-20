@@ -17,4 +17,9 @@ export const Icons = {
   activeDownloadIcon: require('../assets/Icons/activeDwnldIcon.png'),
   activeUserIcon: require('../assets/Icons/activeUserIcon.png'),
   activeLineIcon: require('../assets/Icons/activeLine.png'),
+  backBtnIcon: require('../assets/Icons/back.png'),
+  playBtn: require('../assets/Icons/play.png'),
+  pauseBtn: require('../assets/Icons/pause.png'),
+  nextBtn: require('../assets/Icons/next.png'),
+  prevBtn: require('../assets/Icons/previous.png'),
 };
