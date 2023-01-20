@@ -4,6 +4,7 @@ import Spalsh from '../Screens/Splash';
 import LoginScreen from '../Screens/login';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import BottomTab from './BottomTab';
 
 const Routes = () => {
   const Stack = createNativeStackNavigator();
@@ -13,7 +14,7 @@ const Routes = () => {
       <Stack.Navigator screenOptions={{headerShown: false}}>
         <Stack.Screen name="splash" component={Spalsh} />
         <Stack.Screen name="login" component={LoginScreen} />
-        <Stack.Screen name="home" component={Home} />
+        <Stack.Screen name="BottomTab" component={BottomTab} />
       </Stack.Navigator>
     </NavigationContainer>
   );
