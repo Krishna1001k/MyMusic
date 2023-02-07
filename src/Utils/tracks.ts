@@ -1,6 +1,4 @@
-import TrackPlayer from 'react-native-track-player';
-
-export const tracks: TrackPlayer.Track[] = [
+export const tracks = [
   {
     id: '1',
     url: 'https://www.chosic.com/wp-content/uploads/2021/07/The-Epic-Hero-Epic-Cinematic-Keys-of-Moon-Music.mp3',

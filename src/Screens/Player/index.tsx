@@ -1,24 +1,55 @@
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import React, {useEffect} from 'react';
-import {getStatusBarHeight} from 'react-native-status-bar-height';
-import {normalize, vh, vw} from '../../Utils/dimensions';
 import {
+  vh,
+  vw,
+  normalize,
+  DESIGN_WIDTH,
+  SCREEN_WIDTH,
+} from '../../Utils/dimensions';
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Platform,
+  SafeAreaView,
+  TouchableOpacity,
+  ActivityIndicator,
+  StatusBar,
+  Animated,
+} from 'react-native';
+import TrackPlayer, {
+  State,
+  useProgress,
+  usePlaybackState,
+} from 'react-native-track-player';
+import {
+  NextTrack,
+  PreviousTrack,
   initializePlayer,
   playBackStateToggling,
+  getCurrentTrackIndex,
+  getCurrentTrack,
+  secondsToHHMMSS,
+  seekToTrack,
 } from '../../Utils/PlayerFunction';
 import {colors} from '../../Utils/colors';
-import {Icons} from '../../Utils/images';
-import TrackPlayer, {
-  usePlaybackState,
-  useProgress,
-  State,
-} from 'react-native-track-player';
+import {tracks} from '../../Utils/tracks';
+import React, {useEffect, useState, useRef, useMemo} from 'react';
+import {Icons, images} from '../../Utils/images';
+import Slider from '@react-native-community/slider';
+import RenderSongList from '../../components/renderSongList';
+
 const PlayerScreen = () => {
+  const progress = useProgress();
+  const flatlistRef = useRef(null);
+  const playBackState = usePlaybackState();
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const [currentTrack, setCurrentTrack] = useState(null);
   useEffect(() => {
     const setupPlayer = async () => {
       try {
-        console.log('setupPlayer-------');
         await initializePlayer();
+        await setTrack();
       } catch (err) {
         console.log(err);
       }
@@ -26,59 +57,122 @@ const PlayerScreen = () => {
     setupPlayer();
   }, []);
 
-  const progress = useProgress();
-  const playBackState = usePlaybackState();
-  console.log('playBackState', playBackState);
-  console.log('progress', progress);
+  const setTrack = async () => {
+    console.log('setTrack');
+    await getCurrentTrackIndex((index: number) => {
+      getCurrentTrack(setCurrentTrack, index);
+      flatlistRef.current.scrollToIndex(index);
+    });
+  };
+
+  const onPressNextTrack = () => {
+    NextTrack(setTrack);
+  };
+  const onPressPrevTrack = () => {
+    PreviousTrack(setTrack);
+  };
 
   return (
-    <View style={styles.main}>
+    <SafeAreaView style={styles.main}>
+      <StatusBar barStyle={'light-content'} />
       <View style={styles.header}>
         <TouchableOpacity>
           <Image style={styles.backBtn} source={Icons.backBtnIcon} />
         </TouchableOpacity>
         <Text style={styles.headerText}>Playing Now</Text>
       </View>
-      <View style={styles.artwork}></View>
-      <View style={styles.detailView}>
+
+      <RenderSongList
+        songLists={tracks}
+        callBack={setCurrentTrack}
+        ref={flatlistRef}
+      />
+
+      {/* <View style={styles.detailView}> */}
+      <View style={{paddingHorizontal: vw(16)}}>
+        <Text
+          style={{
+            color: colors.white,
+            fontSize: normalize(22),
+          }}>
+          {currentTrack?.title}
+        </Text>
+        <Text
+          style={{
+            color: colors.white,
+            fontSize: normalize(14),
+          }}>{`${currentTrack?.album ? currentTrack?.album : 'Unknown'} - ${
+          currentTrack?.artist ? currentTrack.artist : 'Unknown'
+        }`}</Text>
+
+        <Slider
+          step={1}
+          tapToSeek
+          minimumValue={0}
+          value={progress.position}
+          maximumTrackTintColor="#8E8E8E"
+          onSlidingComplete={TrackPlayer.seekTo}
+          maximumValue={progress.duration}
+          thumbImage={Icons.sliderThumbImage}
+          minimumTrackTintColor={colors.primaryAqua}
+          style={{width: DESIGN_WIDTH, height: vh(50)}}
+        />
+        <View style={styles.timerContainer}>
+          <Text style={styles.timeText}>
+            {secondsToHHMMSS(progress.position)}
+          </Text>
+          <Text style={styles.timeText}>
+            {secondsToHHMMSS(progress.duration)}
+          </Text>
+        </View>
+        {/* </View> */}
+
         <View style={styles.cntrlBtn}>
-          <TouchableOpacity>
+          <TouchableOpacity activeOpacity={0.7} onPress={onPressPrevTrack}>
             <Image style={styles.nextPrev} source={Icons.prevBtn} />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={{height: vw(45), width: vw(45.5)}}
-            onPress={playBackStateToggling}>
-            <Image
-              style={styles.playPause}
-              source={
-                playBackState !== State.Playing ? Icons.playBtn : Icons.pauseBtn
-              }
+          {playBackState === State.Connecting ? (
+            <ActivityIndicator
+              color={colors.primaryAqua}
+              size={'large'}
+              style={styles.playButtonIconStyle}
             />
-          </TouchableOpacity>
-          <TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              activeOpacity={0.7}
+              style={styles.playButtonIconStyle}
+              onPress={playBackStateToggling}>
+              <Image
+                style={styles.playPause}
+                source={
+                  playBackState !== State.Playing
+                    ? Icons.playBtn
+                    : Icons.pauseBtn
+                }
+              />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity activeOpacity={0.7} onPress={onPressNextTrack}>
             <Image style={styles.nextPrev} source={Icons.nextBtn} />
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    // justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: getStatusBarHeight(true),
     backgroundColor: colors.primaryBackGrnd,
   },
   header: {
-    // height: vh(20),
-    width: vw(347),
-    // alignItems: 'center',
+    width: DESIGN_WIDTH,
+    // backgroundColor: 'red',
+    alignItems: 'center',
+    alignSelf: 'center',
     flexDirection: 'row',
     marginTop: normalize(10),
-
     // backgroundColor: 'yellow',
   },
   headerText: {
@@ -93,24 +187,19 @@ const styles = StyleSheet.create({
     width: normalize(10),
     // backgroundColor: 'red',
   },
-  artwork: {
-    marginTop: normalize(10),
-    height: vh(444),
-    width: vw(347),
-    backgroundColor: colors.white,
+  timerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
-  detailView: {
-    height: normalize(194),
-    width: normalize(347),
-    // backgroundColor: 'grey',
+  timeText: {
+    color: colors.white,
   },
+
   cntrlBtn: {
     height: vw(60),
     width: vw(170),
-    position: 'absolute',
-    bottom: 0,
-    left: 90,
-
+    marginBottom: vh(10),
+    alignSelf: 'center',
     justifyContent: 'space-evenly',
     flexDirection: 'row',
     alignItems: 'center',
@@ -123,6 +212,7 @@ const styles = StyleSheet.create({
     height: normalize(14),
     width: normalize(17),
   },
+  playButtonIconStyle: {height: vw(45), width: vw(45.5)},
 });
 
 export default PlayerScreen;

@@ -22,4 +22,5 @@ export const Icons = {
   pauseBtn: require('../assets/Icons/pause.png'),
   nextBtn: require('../assets/Icons/next.png'),
   prevBtn: require('../assets/Icons/previous.png'),
+  sliderThumbImage: require('../assets/Icons/thumbImage.png'),
 };

@@ -5,6 +5,7 @@ import LoginScreen from '../Screens/login';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BottomTab from './BottomTab';
+import {SafeAreaView} from 'react-native';
 
 const Routes = () => {
   const Stack = createNativeStackNavigator();

@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import TrackPlayer, {
   Capability,
   RepeatMode,
@@ -7,11 +8,12 @@ import TrackPlayer, {
 import {tracks} from './tracks';
 /**
  *
- * @param {*} songLists
+ *
  */
 export const initializePlayer = async () => {
   try {
     await TrackPlayer.setupPlayer();
+
     await TrackPlayer.add(tracks);
 
     await TrackPlayer.updateOptions({
@@ -52,9 +54,15 @@ export const initializePlayer = async () => {
 export const playBackStateToggling = async () => {
   try {
     console.log('Playing');
-    const trackState = await TrackPlayer.getState();
-    if (trackState != State.Playing) TrackPlayer.play();
-    else TrackPlayer.pause();
+    const trackState = await TrackPlayer?.getState();
+    console.log('?????????', trackState);
+    if (trackState !== State?.Playing) {
+      await TrackPlayer.play();
+      console.log('play');
+    } else {
+      await TrackPlayer?.pause();
+      console.log('pause');
+    }
   } catch (error) {
     console.log('check your playBackStateToggling function');
   }
@@ -66,7 +74,7 @@ export const playBackStateToggling = async () => {
  */
 export const seekToTrack = async (value: any) => {
   try {
-    await TrackPlayer.seekTo(value);
+    await TrackPlayer?.seekTo(value);
   } catch (error) {
     alert('check your seekToTrack function');
   }
@@ -153,7 +161,7 @@ export const NextTrack = async (callback: any) => {
  *
  * @param {*} callback
  */
-export const PerviousTrack = async (callback: any) => {
+export const PreviousTrack = async (callback: any) => {
   try {
     await TrackPlayer.skipToPrevious();
     callback();
@@ -216,6 +224,7 @@ export const getCurrentTrackIndex = async (callback: any) => {
  * @param {*} trackIndex
  */
 export const getCurrentTrack = async (callback: any, trackIndex: number) => {
+  console.log('trackindex', trackIndex);
   try {
     const track = await TrackPlayer.getTrack(trackIndex);
     console.log(track);

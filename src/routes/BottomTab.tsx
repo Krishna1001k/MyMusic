@@ -8,7 +8,8 @@ import Favourite from '../Screens/Favourite';
 import UserProfile from '../Screens/UserProfile';
 import {images, Icons} from '../Utils/images';
 import {colors} from '../Utils/colors';
-import {normalize} from '../Utils/dimensions';
+import {normalize, vh, vw} from '../Utils/dimensions';
+
 const BottomTab = () => {
   const BottomTab = createBottomTabNavigator();
   return (
@@ -17,11 +18,13 @@ const BottomTab = () => {
       screenOptions={{
         headerShown: false,
 
-        tabBarStyle: {backgroundColor: colors.tabBarBackgrnd},
+        tabBarStyle: {
+          backgroundColor: colors.tabBarBackgrnd,
+        },
         tabBarLabel: ({focused}) =>
           focused ? (
             <Image
-              style={{height: 3, width: 38, borderRadius: 100}}
+              style={styles.tabBarLabelStyle}
               source={Icons.activeLineIcon}
             />
           ) : null,
@@ -98,6 +101,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: 'red',
+  },
+  tabBarLabelStyle: {
+    height: vh(3),
+    width: vw(38),
+    position: 'absolute',
+    // bottom: normalize(-5),`
+    borderRadius: normalize(100),
   },
 });
 export default BottomTab;
