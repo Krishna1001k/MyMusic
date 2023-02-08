@@ -3,10 +3,12 @@ import React, {
   useCallback,
   useRef,
   useState,
+  useEffect,
   useImperativeHandle,
 } from 'react';
 import {StyleSheet, Animated, View, Image, FlatList} from 'react-native';
 import TrackPlayer from 'react-native-track-player';
+import {colors} from '../Utils/colors';
 import {
   DESIGN_HEIGHT,
   DESIGN_WIDTH,
@@ -15,7 +17,6 @@ import {
   vh,
   vw,
 } from '../Utils/dimensions';
-// import { FlatList } from 'react-native-gesture-handler';
 import {
   SkipTo,
   PlayTrack,
@@ -26,13 +27,13 @@ import {
   getCurrentTrackIndex,
 } from '../Utils/PlayerFunction';
 
-// const CheckTrackIndex = async (viewableIndex: number) => {
-//   const currentTrackIndex = await TrackPlayer.getCurrentTrack();
-//   console.log(currentTrackIndex, viewableIndex);
+const CheckTrackIndex = async (viewableIndex: number) => {
+  const currentTrackIndex = await TrackPlayer.getCurrentTrack();
+  console.log(currentTrackIndex, viewableIndex);
 
-//   if (viewableIndex > currentTrackIndex) NextTrack();
-//   else if (viewableIndex < currentTrackIndex) PerviousTrack();
-// };
+  if (viewableIndex > currentTrackIndex) NextTrack();
+  else if (viewableIndex < currentTrackIndex) PerviousTrack();
+};
 
 const RenderSongList = forwardRef((props: any, ref) => {
   const {songLists, callBack} = props;
@@ -100,15 +101,6 @@ const RenderSongList = forwardRef((props: any, ref) => {
       viewabilityConfigCallbackPairs={viewabilityConfigCallbackPairs.current}
       keyExtractor={(item: any) => item.id.toString()}
       renderItem={renderSongsDetails}
-      // style={{
-      //   backgroundColor: 'grey',
-      //   marginHorizontal: vw(16),
-      //   width: DESIGN_WIDTH,
-      //   marginTop: vh(29),
-      //   borderRadius: normalize(9),
-      // }}
-
-      // contentContainerStyle={{backgroundColor: 'green'}}
       showsHorizontalScrollIndicator={false}
     />
   );
@@ -135,8 +127,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   artworkWrapper: {
-    height: vh(444),
-    width: DESIGN_WIDTH,
+    height: vh(400),
+    width: DESIGN_WIDTH - 16,
+    shadowColor: colors.white,
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 10.0,
+
+    elevation: 5,
   },
   artwork: {
     height: '100%',

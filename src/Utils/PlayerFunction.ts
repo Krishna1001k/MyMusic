@@ -176,7 +176,7 @@ export const PreviousTrack = async (callback: any) => {
  */
 export const SeekTo = async (time: any) => {
   try {
-    await TrackPlayer.seekTo(time);
+    await TrackPlayer.seekTo(time !== Number ? time[0] : time);
   } catch (err) {
     console.log(err);
   }

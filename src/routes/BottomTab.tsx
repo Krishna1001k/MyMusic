@@ -14,7 +14,7 @@ const BottomTab = () => {
   const BottomTab = createBottomTabNavigator();
   return (
     <BottomTab.Navigator
-      initialRouteName="PlayerScreen"
+      initialRouteName="Home"
       screenOptions={{
         headerShown: false,
 

@@ -31,12 +31,14 @@ import {
   getCurrentTrack,
   secondsToHHMMSS,
   seekToTrack,
+  SeekTo,
 } from '../../Utils/PlayerFunction';
 import {colors} from '../../Utils/colors';
 import {tracks} from '../../Utils/tracks';
 import React, {useEffect, useState, useRef, useMemo} from 'react';
 import {Icons, images} from '../../Utils/images';
-import Slider from '@react-native-community/slider';
+import {Slider} from '@miblanchard/react-native-slider';
+
 import RenderSongList from '../../components/renderSongList';
 
 const PlayerScreen = () => {
@@ -45,6 +47,21 @@ const PlayerScreen = () => {
   const playBackState = usePlaybackState();
   const scrollX = useRef(new Animated.Value(0)).current;
   const [currentTrack, setCurrentTrack] = useState(null);
+
+  useEffect(() => {
+    const trackSubscription = TrackPlayer.addEventListener(
+      'playback-track-changed',
+      async data => {
+        console.log('playback-track-changed', data);
+        setTrack();
+      },
+    );
+
+    return () => {
+      trackSubscription.remove();
+    };
+  }, []);
+
   useEffect(() => {
     const setupPlayer = async () => {
       try {
@@ -89,73 +106,90 @@ const PlayerScreen = () => {
       />
 
       {/* <View style={styles.detailView}> */}
-      <View style={{paddingHorizontal: vw(16)}}>
-        <Text
-          style={{
-            color: colors.white,
-            fontSize: normalize(22),
-          }}>
-          {currentTrack?.title}
+
+      <Text
+        style={{
+          color: colors.white,
+          fontSize: normalize(22),
+          marginLeft: vw(16),
+        }}>
+        {currentTrack?.title}
+      </Text>
+      <Text
+        style={{
+          color: colors.white,
+          fontSize: normalize(14),
+          marginLeft: vw(16),
+        }}>{`${currentTrack?.album ? currentTrack?.album : 'Unknown'} - ${
+        currentTrack?.artist ? currentTrack.artist : 'Unknown'
+      }`}</Text>
+
+      <Slider
+        trackClickable
+        minimumValue={0}
+        animateTransitions
+        value={progress.position}
+        maximumTrackTintColor="#8E8E8E"
+        onSlidingComplete={SeekTo}
+        maximumValue={progress.duration}
+        // thumbImage={Icons.sliderThumbImage}
+        thumbTintColor={colors.primaryAqua}
+        thumbStyle={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: normalize(10),
+          width: normalize(10),
+          borderRadius: normalize(5),
+          borderWidth: normalize(1.4),
+          borderColor: colors.white,
+          // overflow: 'hidden',
+        }}
+        minimumTrackTintColor={colors.primaryAqua}
+        containerStyle={{
+          width: DESIGN_WIDTH - 16,
+          height: vh(50),
+          alignSelf: 'center',
+        }}
+      />
+      <View style={styles.timerContainer}>
+        <Text style={styles.timeText}>
+          {secondsToHHMMSS(progress.position)}
         </Text>
-        <Text
-          style={{
-            color: colors.white,
-            fontSize: normalize(14),
-          }}>{`${currentTrack?.album ? currentTrack?.album : 'Unknown'} - ${
-          currentTrack?.artist ? currentTrack.artist : 'Unknown'
-        }`}</Text>
+        <Text style={styles.timeText}>
+          {secondsToHHMMSS(progress.duration)}
+        </Text>
+      </View>
+      {/* </View> */}
 
-        <Slider
-          step={1}
-          tapToSeek
-          minimumValue={0}
-          value={progress.position}
-          maximumTrackTintColor="#8E8E8E"
-          onSlidingComplete={TrackPlayer.seekTo}
-          maximumValue={progress.duration}
-          thumbImage={Icons.sliderThumbImage}
-          minimumTrackTintColor={colors.primaryAqua}
-          style={{width: DESIGN_WIDTH, height: vh(50)}}
-        />
-        <View style={styles.timerContainer}>
-          <Text style={styles.timeText}>
-            {secondsToHHMMSS(progress.position)}
-          </Text>
-          <Text style={styles.timeText}>
-            {secondsToHHMMSS(progress.duration)}
-          </Text>
-        </View>
-        {/* </View> */}
-
-        <View style={styles.cntrlBtn}>
-          <TouchableOpacity activeOpacity={0.7} onPress={onPressPrevTrack}>
-            <Image style={styles.nextPrev} source={Icons.prevBtn} />
-          </TouchableOpacity>
-          {playBackState === State.Connecting ? (
-            <ActivityIndicator
-              color={colors.primaryAqua}
-              size={'large'}
-              style={styles.playButtonIconStyle}
+      <View style={styles.cntrlBtn}>
+        <TouchableOpacity
+          hitSlop={{top: 10, bottom: 10, left: 25, right: 20}}
+          activeOpacity={0.7}
+          onPress={onPressPrevTrack}>
+          <Image style={styles.nextPrev} source={Icons.prevBtn} />
+        </TouchableOpacity>
+        {playBackState === State.Connecting ? (
+          <ActivityIndicator
+            color={colors.primaryAqua}
+            size={'large'}
+            style={styles.playButtonIconStyle}
+          />
+        ) : (
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.playButtonIconStyle}
+            onPress={playBackStateToggling}>
+            <Image
+              style={styles.playPause}
+              source={
+                playBackState !== State.Playing ? Icons.playBtn : Icons.pauseBtn
+              }
             />
-          ) : (
-            <TouchableOpacity
-              activeOpacity={0.7}
-              style={styles.playButtonIconStyle}
-              onPress={playBackStateToggling}>
-              <Image
-                style={styles.playPause}
-                source={
-                  playBackState !== State.Playing
-                    ? Icons.playBtn
-                    : Icons.pauseBtn
-                }
-              />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity activeOpacity={0.7} onPress={onPressNextTrack}>
-            <Image style={styles.nextPrev} source={Icons.nextBtn} />
           </TouchableOpacity>
-        </View>
+        )}
+        <TouchableOpacity activeOpacity={0.7} onPress={onPressNextTrack}>
+          <Image style={styles.nextPrev} source={Icons.nextBtn} />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -168,12 +202,9 @@ const styles = StyleSheet.create({
   },
   header: {
     width: DESIGN_WIDTH,
-    // backgroundColor: 'red',
-    alignItems: 'center',
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: normalize(10),
-    // backgroundColor: 'yellow',
   },
   headerText: {
     color: colors.white,
@@ -190,6 +221,7 @@ const styles = StyleSheet.create({
   timerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginHorizontal: vw(16),
   },
   timeText: {
     color: colors.white,
