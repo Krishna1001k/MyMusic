@@ -5,12 +5,12 @@ import TrackPlayer, {
   State,
   AppKilledPlaybackBehavior,
 } from 'react-native-track-player';
-import {tracks} from './tracks';
+// import {tracks} from './tracks';
 /**
  *
  *
  */
-export const initializePlayer = async () => {
+export const initializePlayer = async (tracks: any) => {
   try {
     await TrackPlayer.setupPlayer();
 
@@ -174,9 +174,9 @@ export const PreviousTrack = async (callback: any) => {
  *
  * @param {*} time
  */
-export const SeekTo = async (time: any) => {
+export const SeekTo = async (value: any) => {
   try {
-    await TrackPlayer.seekTo(time !== Number ? time[0] : time);
+    await TrackPlayer.seekTo(Array.isArray(value) ? value[0] : value);
   } catch (err) {
     console.log(err);
   }

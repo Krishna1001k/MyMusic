@@ -27,13 +27,13 @@ import {
   getCurrentTrackIndex,
 } from '../Utils/PlayerFunction';
 
-const CheckTrackIndex = async (viewableIndex: number) => {
-  const currentTrackIndex = await TrackPlayer.getCurrentTrack();
-  console.log(currentTrackIndex, viewableIndex);
+// const CheckTrackIndex = async (viewableIndex: number) => {
+//   const currentTrackIndex = await TrackPlayer.getCurrentTrack();
+//   console.log(currentTrackIndex, viewableIndex);
 
-  if (viewableIndex > currentTrackIndex) NextTrack();
-  else if (viewableIndex < currentTrackIndex) PerviousTrack();
-};
+//   if (viewableIndex > currentTrackIndex) NextTrack();
+//   else if (viewableIndex < currentTrackIndex) PerviousTrack();
+// };
 
 const RenderSongList = forwardRef((props: any, ref) => {
   const {songLists, callBack} = props;
@@ -82,7 +82,7 @@ const RenderSongList = forwardRef((props: any, ref) => {
             source={
               typeof item.artwork === 'string' && item.artwork.includes('http')
                 ? {uri: `${item?.artwork}`}
-                : {uri: `${item?.artwork?.uri}`}
+                : {uri: `data:image/png;base64,${item?.artwork}`}
             }
           />
         </View>
@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   artworkWrapper: {
-    height: vh(400),
-    width: DESIGN_WIDTH - 16,
+    height: vh(444),
+    width: vw(387),
     shadowColor: colors.white,
     shadowOffset: {
       width: 0,
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   artwork: {
     height: '100%',
     width: '100%',
-    resizeMode: 'cover',
+    resizeMode: 'contain',
     borderRadius: normalize(10),
     backgroundColor: 'lightgrey',
   },

@@ -8,11 +8,16 @@ install! 'cocoapods', :deterministic_uuids => false
 production = ENV["PRODUCTION"] == "1"
 
 target 'MyMusic' do
+  permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+  pod 'Permission-MediaLibrary', :path => "#{permissions_path}/MediaLibrary"
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
+  
   config = use_native_modules!
 
 
-  # Flags change depending on the env values.
+  # Flags change depending on the env values.x
   # use_frameworks!
   flags = get_default_flags()
   # use_frameworks!()

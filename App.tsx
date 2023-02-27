@@ -7,9 +7,11 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 const App = () => {
   return (
-    <Provider store={Store}>
-      <Routes />
-    </Provider>
+    <React.Fragment>
+      <Provider store={Store}>
+        <Routes />
+      </Provider>
+    </React.Fragment>
   );
 };
 

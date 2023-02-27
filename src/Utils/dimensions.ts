@@ -2,8 +2,8 @@ import {Dimensions, PixelRatio} from 'react-native';
 export const SCREEN_WIDTH = Dimensions.get('window').width;
 export const SCREEN_HEIGHT_SCREEN = Dimensions.get('screen').height;
 export const SCREEN_HEIGHT = Dimensions.get('window').height;
-export const DESIGN_HEIGHT = 812;
-export const DESIGN_WIDTH = 375;
+export const DESIGN_HEIGHT = 926;
+export const DESIGN_WIDTH = 428;
 
 // It is based on the screen width of your design layouts e.g Height 600 x Width 375
 const scale = SCREEN_WIDTH / 375;

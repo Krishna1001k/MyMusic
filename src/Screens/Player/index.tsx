@@ -34,20 +34,21 @@ import {
   SeekTo,
 } from '../../Utils/PlayerFunction';
 import {colors} from '../../Utils/colors';
-import {tracks} from '../../Utils/tracks';
 import React, {useEffect, useState, useRef, useMemo} from 'react';
 import {Icons, images} from '../../Utils/images';
 import {Slider} from '@miblanchard/react-native-slider';
 
 import RenderSongList from '../../components/renderSongList';
+import {useSelector} from 'react-redux';
 
 const PlayerScreen = () => {
+  const tracks = useSelector((state: any) => state.home.data);
   const progress = useProgress();
   const flatlistRef = useRef(null);
   const playBackState = usePlaybackState();
   const scrollX = useRef(new Animated.Value(0)).current;
   const [currentTrack, setCurrentTrack] = useState(null);
-
+  const [position, setPosition] = useState(0);
   useEffect(() => {
     const trackSubscription = TrackPlayer.addEventListener(
       'playback-track-changed',
@@ -65,7 +66,6 @@ const PlayerScreen = () => {
   useEffect(() => {
     const setupPlayer = async () => {
       try {
-        await initializePlayer();
         await setTrack();
       } catch (err) {
         console.log(err);
@@ -113,15 +113,21 @@ const PlayerScreen = () => {
           fontSize: normalize(22),
           marginLeft: vw(16),
         }}>
-        {currentTrack?.title}
+        {currentTrack?.title.replace(/\s*\([^)]*\)/, '')}
       </Text>
       <Text
         style={{
           color: colors.white,
           fontSize: normalize(14),
           marginLeft: vw(16),
-        }}>{`${currentTrack?.album ? currentTrack?.album : 'Unknown'} - ${
-        currentTrack?.artist ? currentTrack.artist : 'Unknown'
+        }}>{`${
+        currentTrack?.album
+          ? currentTrack?.album.replace(/\s*\([^)]*\)/, '')
+          : 'Unknown'
+      } - ${
+        currentTrack?.artist
+          ? currentTrack.artist.replace(/\s*\([^)]*\)/, '')
+          : 'Unknown'
       }`}</Text>
 
       <Slider
@@ -130,9 +136,12 @@ const PlayerScreen = () => {
         animateTransitions
         value={progress.position}
         maximumTrackTintColor="#8E8E8E"
-        onSlidingComplete={SeekTo}
+        onSlidingComplete={value => {
+          // why is this an array?
+          value = Array.isArray(value) ? value[0] : value;
+          TrackPlayer.seekTo(value);
+        }}
         maximumValue={progress.duration}
-        // thumbImage={Icons.sliderThumbImage}
         thumbTintColor={colors.primaryAqua}
         thumbStyle={{
           justifyContent: 'center',
@@ -146,8 +155,9 @@ const PlayerScreen = () => {
         }}
         minimumTrackTintColor={colors.primaryAqua}
         containerStyle={{
-          width: DESIGN_WIDTH - 16,
-          height: vh(50),
+          width: vw(384),
+          height: vh(9),
+          marginTop: vh(29),
           alignSelf: 'center',
         }}
       />
@@ -187,7 +197,10 @@ const PlayerScreen = () => {
             />
           </TouchableOpacity>
         )}
-        <TouchableOpacity activeOpacity={0.7} onPress={onPressNextTrack}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={onPressNextTrack}
+          hitSlop={{top: 10, bottom: 10, left: 25, right: 20}}>
           <Image style={styles.nextPrev} source={Icons.nextBtn} />
         </TouchableOpacity>
       </View>
@@ -201,7 +214,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.primaryBackGrnd,
   },
   header: {
-    width: DESIGN_WIDTH,
+    width: vw(387),
+    height: vh(19),
     alignSelf: 'center',
     flexDirection: 'row',
     marginTop: normalize(10),
@@ -221,7 +235,10 @@ const styles = StyleSheet.create({
   timerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: vw(16),
+    marginTop: vh(10),
+    width: vw(385),
+    alignSelf: 'center',
+    // marginHorizontal: vw(20),
   },
   timeText: {
     color: colors.white,

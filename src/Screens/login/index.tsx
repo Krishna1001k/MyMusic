@@ -3,7 +3,7 @@ import React from 'react';
 import {images} from '../../Utils/images';
 import {colors} from '../../Utils/colors';
 import loginStyles from './styles';
-import FormTextInput from '../../components/TextInputs/FormTextInput';
+import CustomTextInput from '../../components/TextInputs/CustomTextInput';
 import CustomButton from '../../components/CustomButton';
 import LineText from '../../components/Line&Text';
 import BottomText from '../../components/BottomText';
@@ -35,7 +35,7 @@ const LoginScreen = () => {
       <Text style={loginStyles.whiteTitleText}>Create your account</Text>
 
       <View style={loginStyles.inputView}>
-        <FormTextInput
+        <CustomTextInput
           placholder={'Full Name'}
           onChangeText={(txt: string) => {
             console.log(txt);
@@ -43,7 +43,7 @@ const LoginScreen = () => {
           title={'Name'}
           secureText={false}
         />
-        <FormTextInput
+        <CustomTextInput
           placholder={'Email'}
           onChangeText={(txt: string) => {
             console.log(txt);
@@ -51,7 +51,7 @@ const LoginScreen = () => {
           title={'Email'}
           secureText={false}
         />
-        <FormTextInput
+        <CustomTextInput
           placholder={'Password'}
           onChangeText={(txt: string) => {
             console.log(txt);
